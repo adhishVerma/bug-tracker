@@ -45,6 +45,10 @@ function Dashboard() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [editIssue, setIssue] = React.useState(false)
+  const handleIssueOpen = () => setIssue(true);
+  const handleIssueClose = () => setIssue(false);
+
   const handler = (key) => {
     console.log(key)
   }
@@ -114,6 +118,7 @@ function Dashboard() {
                 <TableCell>Created</TableCell>
                 <TableCell>Asignee</TableCell>
                 <TableCell>Priority</TableCell>
+                <TableCell>Edit</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -127,6 +132,7 @@ function Dashboard() {
                 <TableCell>22-02-2020</TableCell>
                 <TableCell>Jane Doe</TableCell>
                 <TableCell>Severe</TableCell>
+                <TableCell sx={{padding : "0"}}><Button>Edit</Button></TableCell>
               </TableRow>
               <TableRow onClick={(e) => handler("key")}>
                 <TableCell align="center" >
@@ -138,6 +144,7 @@ function Dashboard() {
                 <TableCell>22-02-2020</TableCell>
                 <TableCell>Jane Doe</TableCell>
                 <TableCell>Severe</TableCell>
+                <TableCell sx={{padding : "0"}}><Button onClick={handleIssueOpen} >Edit</Button></TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -186,6 +193,48 @@ function Dashboard() {
           </Button>
         </Box>
       </Modal>
+
+      {/* Modal to edit issue */}
+      <Modal
+        open={editIssue}
+        onClose={handleIssueClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography
+            id="modal-modal-title"
+            variant="h5"
+            component="h2"
+            sx={{ marginBottom: 3 }}
+          >
+            Edit Issue
+          </Typography>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <FormControl>
+            <InputLabel id="test-select-label">status</InputLabel>
+            <Select label="priority"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select">
+                <MenuItem value={2}>closed</MenuItem>
+                <MenuItem value={1}>open</MenuItem>
+            </Select></FormControl>
+            <FormControl>
+            <InputLabel id="test-select-label">priority</InputLabel>
+            <Select value="" onChange={(e) => console.log(e.target.value)} label="priority"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select">
+                <MenuItem value={3}>High</MenuItem>
+                <MenuItem value={2}>Medium</MenuItem>
+                <MenuItem value={1}>Low</MenuItem>
+            </Select></FormControl>
+          </div>
+          <Button variant="contained" sx={{ marginTop: "25px" }}>
+            Submit Changes
+          </Button>
+        </Box>
+      </Modal>
+
     </Container>
   );
 }

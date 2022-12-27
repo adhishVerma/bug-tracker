@@ -1,15 +1,20 @@
-import { Button, TextField, Typography, Paper } from "@mui/material";
+import { Alert, Button, TextField, Typography, Paper } from "@mui/material";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import axios from "axios";
 import useUser from "../functions/store";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Login() {
   const userLogin = useUser((state) => state.loginUser);
   const user = useUser((state) => state.user);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+
+  const [loading, setLoading] = useState(null);
+  const [alert, setAlert] = useState(null);
+  const [alertContent, setAlertContent] = useState(null);
 
   if (user) {
     return <Navigate to="/" />;
@@ -28,10 +33,15 @@ function Login() {
       },
     };
     try {
+      setLoading(true);
       const response = await axios.post(url, data, config);
-      userLogin(response);
+      userLogin(response.data);
+      setAlert(false);
+      setLoading(false);
     } catch (error) {
-      console.log(error);
+      setAlert(true);
+      setAlertContent(error.response.data.message)
+      setLoading(false);
     }
   };
 
@@ -51,7 +61,7 @@ function Login() {
           <Typography>Welcome back</Typography>
           <TextField
             variant="standard"
-            label="user-id"
+            label="email"
             size="small"
             margin="dense"
             onChange={(e) => setEmail(e.target.value)}
@@ -64,10 +74,34 @@ function Login() {
             margin="dense"
             onChange={(e) => setPassword(e.target.value)}
           ></Password>
-          <Button variant="contained" onClick={handleSubmit}>
-            Login
+          <Button
+            sx={{ marginTop: "15px", marginBottom: "15px" }}
+            variant="contained"
+            onClick={handleSubmit}
+          >
+            {!loading ? (
+              `Log in`
+            ) : (
+              <CircularProgress color="inherit" size={24} />
+            )}
           </Button>
+          <div>
+            <Typography
+              sx={{ color: "rgb(150,160,150)", display: "inline-block" }}
+            >
+              New User?
+            </Typography>
+            <Typography sx={{ display: "inline-block", marginLeft: "3px" }}>
+              <Link
+                to="/register"
+                style={{ textDecoration: "none", color: "rgb(120,120,120)" }}
+              >
+                Register
+              </Link>
+            </Typography>
+          </div>
         </Wrapper>
+        {alert ? <Alert severity='error'>{alertContent}</Alert> : <></> }
       </Paper>
     </Container>
   );
@@ -82,7 +116,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  margin-top: 200px;
+  margin-top: 100px;
   padding: 3rem;
   display: flex;
   flex-direction: column;

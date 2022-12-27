@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
-import { Button, Box } from "@mui/material";
+import { Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import useUser from "../functions/store";
 
 function Navbar() {
   const user = useUser((state) => state.user);
   const logoutUser = useUser((state) => state.logoutUser);
+
   return (
     <Nav>
       <Box sx={{ minWidth: "200px", display: "flex", justifyContent: "start" }}>
@@ -21,7 +22,8 @@ function Navbar() {
         <Link to="/projects">Projects</Link>
         <Link to="/teams">Teams</Link>
       </NavMenu>
-      <Box sx={{ minWidth: "200px", display: "flex", justifyContent: "end" }}>
+      <Box sx={{ minWidth: "200px", display: "flex", justifyContent: "end", alignItems : "center" }}>
+        <Link style={{textDecoration : "none"}} to="/me">{user && <Typography sx={{color: "white", marginRight : "10px"}}>{user.name}</Typography>}</Link>
         {!user && (
           <Link to="/login">
             <Button variant="contained">Log in</Button>

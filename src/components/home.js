@@ -5,7 +5,14 @@ function Home() {
   return ( 
     <Container>
       <Background/>
-      <Typography variant="h1">Hello World</Typography>
+      <Typography variant="h2">Hello World</Typography>
+      <Typography sx={{marginTop : "45px",marginBottom : "45px"}} variant="h5">Are you tired of using clunky, outdated tools for managing and tracking bugs in your software projects? Our application is here to help. With a sleek and intuitive interface, our bug tracking system makes it easy for you and your team to collaborate on multiple projects and ensure that all bugs are addressed in a timely manner.</Typography>
+     
+      <Typography variant="h4" sx={{fontWeight : "300"}}>Some key features of our bug tracking web application include:</Typography> <ul>
+        <li><Typography>Collaboration: Work with your team members in real-time to identify and fix bugs.</Typography></li>
+        <li><Typography>Customization: Customize your projects and workflow to fit your unique needs and processes.</Typography></li>
+        <li><Typography>Reporting: Generate reports to track the progress of your bug resolution efforts.</Typography></li>
+      </ul>
     </Container>
    );
 }
@@ -24,9 +31,4 @@ const Background = styled.div`
   right: 0;
   left: 0;
   height : 100%;
-  background-color: #ffffff;
-  opacity: 0.4;
-  background-image: radial-gradient(#000000 0.75px, #ffffff 0.75px);
-  background-size: 15px 15px;
-  z-index: -1;
 `;
