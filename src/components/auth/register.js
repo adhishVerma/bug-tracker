@@ -57,11 +57,11 @@ function Register() {
       email: userData.email,
       password: userData.password,
     });
-    const url = "http://localhost:5000/api/users/";
+    const url = `${process.env.REACT_APP_BACKEND_URL}api/users/`;
     const config = {
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Origin": `${process.env.REACT_APP_FRONTEND}`,
       },
     };
     try {

@@ -25,11 +25,11 @@ function Login() {
       email: email,
       password: password,
     });
-    const url = "http://localhost:5000/api/users/login";
+    const url = `${process.env.REACT_APP_BACKEND_URL}api/users/login`;
     const config = {
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Origin": `${process.env.REACT_APP_FRONTEND}`,
       },
     };
     try {
