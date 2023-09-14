@@ -1,261 +1,103 @@
-import styled from "@emotion/styled";
 import {
-  Box,
   Drawer,
-  Button,
-  Divider,
-  Tab,
-  Tabs,
+  Container,
   Paper,
-  Typography,
   Table,
   TableContainer,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Chip,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
+  Typography,
 } from "@mui/material";
-import Modal from "@mui/material/Modal";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AddCircleOutlineSharp } from "@mui/icons-material";
-import { useState } from "react";
 import * as React from "react";
+import { Project } from "./project/Project";
+import axios from 'axios';
+import useUser from '../functions/store'
+import { ProjectData } from "./project/ProjectData";
+import { toast } from 'react-toastify'
 
-const drawerWidth = 240;
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 700,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
 
 function Dashboard() {
-  const [tab, setTab] = useState(0);
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [loading, setLoading] = React.useState(true);
+  const [projects, setProjects] = React.useState([]);
+  const [project, setProject] = React.useState(null);
+  const user = useUser((state) => state.user);
 
-  const [editIssue, setIssue] = React.useState(false)
-  const handleIssueOpen = () => setIssue(true);
-  const handleIssueClose = () => setIssue(false);
+  const { token } = user;
+  const config = {
+    headers: { authorization: `Bearer ${token}` }
+  }
+  // UseEffect to fetch the projects
+  React.useEffect(() => {
 
-  const handler = (key) => {
-    console.log(key)
+    const fetchProjects = async () => {
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}api/projects`, config)
+      setProjects(res.data);
+      setLoading(false);
+    }
+    if (loading) {
+      fetchProjects();
+    }
+    // eslint-disable-next-line
+  }, [loading])
+
+  const [state, setState] = React.useState(false);
+  const toggleDrawer = (event, value) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setState(value);
   }
 
-  const handleTab = (e, newValue) => {
-    setTab(newValue);
-  };
+  const handleDrawerOpen = async (e) => {
+    // fetch the project data, and feed it into the projectData component
+    try {
+      const projectId = e.target.dataset['id']
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}api/projects/${projectId}`, config);
+      setProject(response.data);
+      toggleDrawer(e, true);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
 
   return (
     <Container>
-      <Background />
-      <div style={{ display: "flex" }}>
-        <CssBaseline />
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-              "z-index": "1",
-              paddingTop: "72px",
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          <Button
-            style={{
-              marginTop: "30px",
-              marginBottom: "30px",
-              marginRight: "auto",
-              marginLeft: "auto",
-            }}
-            onClick={handleOpen}
-          >
-            <AddCircleOutlineSharp />
-            <span>Create Issue</span>
-          </Button>
-          <Divider />
-          <Tabs
-            style={{ marginTop: "25px", marginBottom: "25px" }}
-            value={tab}
-            onChange={handleTab}
-            orientation="vertical"
-          >
-            <Tab label="Assigned to me" />
-            <Tab label="Reported by me" />
-            <Tab label="To be verified" />
-          </Tabs>
-          <Divider />
-        </Drawer>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    width: 125,
-                  }}
-                >
-                  Current status
-                </TableCell>
-                <TableCell>Issue</TableCell>
-                <TableCell>Project</TableCell>
-                <TableCell>Reporter</TableCell>
-                <TableCell>Created</TableCell>
-                <TableCell>Asignee</TableCell>
-                <TableCell>Priority</TableCell>
-                <TableCell>Edit</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell align="center">
-                  <Chip sx={{ width: 80 }} label="open" color="primary" />
-                </TableCell>
-                <TableCell>Issue Name</TableCell>
-                <TableCell>Project Name</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>22-02-2020</TableCell>
-                <TableCell>Jane Doe</TableCell>
-                <TableCell>Severe</TableCell>
-                <TableCell sx={{padding : "0"}}><Button>Edit</Button></TableCell>
-              </TableRow>
-              <TableRow onClick={(e) => handler("key")}>
-                <TableCell align="center" >
-                  <Chip sx={{ width: 80 }} label="closed" color="success" />
-                </TableCell>
-                <TableCell>Issue Name</TableCell>
-                <TableCell>Project Name</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>22-02-2020</TableCell>
-                <TableCell>Jane Doe</TableCell>
-                <TableCell>Severe</TableCell>
-                <TableCell sx={{padding : "0"}}><Button onClick={handleIssueOpen} >Edit</Button></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      {/* Modal */}
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography
-            id="modal-modal-title"
-            variant="h5"
-            component="h2"
-            sx={{ marginBottom: 3 }}
-          >
-            Create Issue
-          </Typography>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <TextField id="name" label="issue" variant="outlined"></TextField>
-            <TextField id="desc" label="description" variant="outlined" multiline></TextField>
-            <FormControl>
-            <InputLabel id="project">project</InputLabel>
-            <Select label="project"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select">
-                <MenuItem value={3}>High</MenuItem>
-                <MenuItem value={2}>Medium</MenuItem>
-                <MenuItem value={1}>Low</MenuItem>
-            </Select></FormControl>
-            <FormControl>
-            <InputLabel id="test-select-label">priority</InputLabel>
-            <Select label="priority"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select">
-                <MenuItem value={3}>High</MenuItem>
-                <MenuItem value={2}>Medium</MenuItem>
-                <MenuItem value={1}>Low</MenuItem>
-            </Select></FormControl>
-          </div>
-          <Button variant="contained" sx={{ marginTop: "25px" }}>
-            Submit
-          </Button>
-        </Box>
-      </Modal>
-
-      {/* Modal to edit issue */}
-      <Modal
-        open={editIssue}
-        onClose={handleIssueClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography
-            id="modal-modal-title"
-            variant="h5"
-            component="h2"
-            sx={{ marginBottom: 3 }}
-          >
-            Edit Issue
-          </Typography>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <FormControl>
-            <InputLabel id="test-select-label">status</InputLabel>
-            <Select label="priority"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select">
-                <MenuItem value={2}>closed</MenuItem>
-                <MenuItem value={1}>open</MenuItem>
-            </Select></FormControl>
-            <FormControl>
-            <InputLabel id="test-select-label">priority</InputLabel>
-            <Select value="" onChange={(e) => console.log(e.target.value)} label="priority"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select">
-                <MenuItem value={3}>High</MenuItem>
-                <MenuItem value={2}>Medium</MenuItem>
-                <MenuItem value={1}>Low</MenuItem>
-            </Select></FormControl>
-          </div>
-          <Button variant="contained" sx={{ marginTop: "25px" }}>
-            Submit Changes
-          </Button>
-        </Box>
-      </Modal>
-
+      <Typography style={{ marginBottom: 25, fontSize: 28, letterSpacing: 2, color: "rgba(0,0,0,0.49)" }} >list projects</Typography>
+      <CssBaseline />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Project Name</TableCell>
+              <TableCell>Creator</TableCell>
+              <TableCell>Created</TableCell>
+              <TableCell>Updated</TableCell>
+              <TableCell style={{ width: 100, textAlign: 'center' }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {projects.map((item) => <Project
+              name={item.name}
+              key={item._id}
+              creator={item.creator}
+              updated={item.updatedAt} created={item.createdAt}
+              openDrawer={handleDrawerOpen}
+              team={item.team}
+              reload={() => setLoading(true)}
+              id={item._id} />)}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Drawer anchor='right' open={state} style={{ padding: "1em" }} onClose={(e) => {
+        toggleDrawer(e, false)
+      }}><ProjectData project={project} reload={() => setLoading(true)} /></Drawer>
     </Container>
   );
 }
 
 export default Dashboard;
 
-const Container = styled.div`
-  margin-top: 72px;
-  min-height: calc(100vh - 250px);
-  padding: calc(3.5vw + 5px);
-`;
 
-const Background = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 100%;
-  background-color: #ffffff;
-  opacity: 0.4;
-  background-image: radial-gradient(#000000 0.75px, #ffffff 0.75px);
-  background-size: 15px 15px;
-  z-index: -1;
-`;

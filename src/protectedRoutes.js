@@ -1,6 +1,6 @@
 import useUser from "./functions/store";
-import {  Outlet } from "react-router-dom";
-import Login from "./components/login";
+import { Outlet } from "react-router-dom";
+import Login from "./components/auth/login";
 
 
 function ProtectedRoutes() {

@@ -2,7 +2,7 @@ import { Alert,Button, TextField, Typography, Paper } from "@mui/material";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import axios from "axios";
-import useUser from "../functions/store";
+import useUser from "../../functions/store";
 import { Link, Navigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -174,7 +174,5 @@ const Background = styled.div`
   height: 100%;
   background-color: #ffffff;
   opacity: 0.4;
-  background-image: radial-gradient(#000000 0.75px, #ffffff 0.75px);
-  background-size: 15px 15px;
   z-index: -1;
 `;

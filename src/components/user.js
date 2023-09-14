@@ -64,7 +64,6 @@ const User = () => {
 
   return (
     <Container>
-      <Background />
       {userData.name ? (
         <Typography>{`Hello, ${userData.name}`}</Typography>
       ) : (
@@ -117,12 +116,4 @@ const Container = styled.div`
   margin-top: 72px;
   min-height: calc(100vh - 250px);
   padding: calc(3.5vw + 5px);
-`;
-
-const Background = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 100%;
 `;
